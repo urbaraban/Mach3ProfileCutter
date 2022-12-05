@@ -8,6 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>ProfileCutter</RootNamespace>
     <AssemblyName>ProfileCutter</AssemblyName>
+    <LangVersion>8.0</LangVersion>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -35,6 +36,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Xaml.Behaviors.Wpf.1.1.39\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -55,6 +59,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\AxisControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -64,12 +72,49 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\Write.cs" />
+    <Compile Include="Controls\AxisControl.xaml.cs">
+      <DependentUpon>AxisControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Panels\Mach3StatusControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Panels\ManualPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Panels\OnProgrammPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Panels\SettingPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\MACH3\AxisModel.cs" />
+    <Compile Include="Model\CutterModel.cs" />
+    <Compile Include="Model\MACH3\Mach3SensorPoller.cs" />
+    <Compile Include="Model\ModelObject.cs" />
+    <Compile Include="Model\MACH3\SensorModel.cs" />
+    <Compile Include="Model\MACH3\ToggleModel.cs" />
+    <Compile Include="Panels\Mach3StatusControl.xaml.cs">
+      <DependentUpon>Mach3StatusControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\ManualPanel.xaml.cs">
+      <DependentUpon>ManualPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\OnProgrammPanel.xaml.cs">
+      <DependentUpon>OnProgrammPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Panels\SettingPanel.xaml.cs">
+      <DependentUpon>SettingPanel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -96,10 +141,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Model\" />
-    <Folder Include="Panels\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="inpout32.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -107,6 +149,12 @@
     <Content Include="inpoutx64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Mach3_netframework\Mach3_netframework.csproj">
+      <Project>{CCCB99C4-B6D9-4311-9E5F-EB513C0EC90C}</Project>
+      <Name>Mach3_netframework</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

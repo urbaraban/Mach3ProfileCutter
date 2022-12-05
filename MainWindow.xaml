@@ -3,22 +3,36 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ProfileCutter"
+        xmlns:local="clr-namespace:ProfileCutter" xmlns:panels="clr-namespace:ProfileCutter.Panels"
         mc:Ignorable="d"
         Title="MainWindow" Height="550" Width="550">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="100"/>
             <RowDefinition/>
-            <RowDefinition Height="150"/>
+            <RowDefinition Height="100"/>
         </Grid.RowDefinitions>
         <Button Content="STOP"
                 Grid.Row="0"
                 Grid.RowSpan="1"/>
         <TabPanel Grid.RowSpan="1"
                   Grid.Row="1">
-            <TabItem Header="1"/>
+            <TabItem Header="Ручной">
+                <TabItem.Content>
+                    <panels:ManualPanel/>
+                </TabItem.Content>
+            </TabItem>
+            <TabItem Header="По программе">
+                <TabItem.Content>
+                    <panels:OnProgrammPanel/>
+                </TabItem.Content>
+            </TabItem>
+            <TabItem Header="Настройки">
+                <TabItem.Content>
+                    <panels:SettingPanel/>
+                </TabItem.Content>
+            </TabItem>
         </TabPanel>
-
+        <panels:Mach3StatusControl Grid.Row="2"/>
     </Grid>
 </Window>

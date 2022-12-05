@@ -1,5 +1,4 @@
-﻿using ProfileCutter.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,17 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ProfileCutter
+namespace ProfileCutter.Panels
 {
     /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
+    /// Логика взаимодействия для Mach3StatusControl.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class Mach3StatusControl : UserControl
     {
-        public MainWindow()
+        public Mach3StatusControl()
         {
             InitializeComponent();
-            this.DataContext = new CutterModel();
         }
     }
 }
