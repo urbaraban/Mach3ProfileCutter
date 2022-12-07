@@ -6,18 +6,50 @@ namespace ProfileCutter.Model.MACH3
 {
     internal class AxisModel : ModelObject
     {
-        public double Position { get; }
+        public double StartPosition
+        {
+            get => startposition;
+            set
+            {
+                startposition= value;
+                OnPropertyChanged(nameof(StartPosition));
+                OnPropertyChanged(nameof(Position));
+                OnPropertyChanged(nameof(Steps));
+            }
+        }
+        private double startposition = 0;
+        public double Position
+        {
+            get => Steps / StPerMillimetre - StartPosition;
+            set
+            {
+                OnPropertyChanged(nameof(Position));
+                OnPropertyChanged(nameof(Steps));
+            }
+        }
+
+        public double StPerMillimetre 
+        {
+            get => stpermillimetre;
+            set
+            {
+                stpermillimetre = value;
+                OnPropertyChanged(nameof(StPerMillimetre));
+            }
+        }
+        public double stpermillimetre = 1;
+        public double Steps => this.AxisMotor.Position;
         public string Name { get; }
-        private Mach3AxisMotor axisMotor { get; }
+        private Mach3AxisMotor AxisMotor { get; }
         public AxisModel(string name, Mach3AxisMotor mach3Axis)
         {
             this.Name = name;
-            this.axisMotor = mach3Axis;
+            this.AxisMotor = mach3Axis;
         }
 
         public ICommand SetZeroCommand => new ActionCommand(() =>
         {
-
+            this.StartPosition = this.Position;
         });
     }
 }

@@ -18,7 +18,7 @@ namespace ProfileCutter.Panels
     /// <summary>
     /// Логика взаимодействия для ManualPanel.xaml
     /// </summary>
-    public partial class ManualPanel : Page
+    public partial class ManualPanel : UserControl
     {
         public ManualPanel()
         {

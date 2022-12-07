@@ -5,13 +5,17 @@ namespace ProfileCutter.Model.MACH3
     internal class SensorModel : ModelObject
     {
         public string Name { get; }
-        public bool Detect => this.Mach3Sensor.Detect;
-        Mach3Sensor Mach3Sensor { get; }
-        public SensorModel(string Name, Mach3Sensor sensor) 
+        public bool Detect => Poller.pins[Num] == Check;
+        private Mach3SensorPoller Poller { get; }
+        private int Num { get; }
+        private byte Check { get; }
+
+        public SensorModel(string name, Mach3SensorPoller sensor, int num, byte check) 
         {
-            this.Name = Name;
-            this.Mach3Sensor = sensor;
-            this.Mach3Sensor.SensorChanged += Mach3Sensor_SensorChanged;
+            this.Name = name;
+            this.Poller = sensor;
+            this.Num = num;
+            this.Check = check;
         }
 
         private void Mach3Sensor_SensorChanged(object sender, bool e)

@@ -18,7 +18,7 @@ namespace ProfileCutter.Panels
     /// <summary>
     /// Логика взаимодействия для SettingPanel.xaml
     /// </summary>
-    public partial class SettingPanel : Page
+    public partial class SettingPanel : UserControl
     {
         public SettingPanel()
         {

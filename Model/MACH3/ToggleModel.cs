@@ -10,12 +10,12 @@ namespace ProfileCutter.Model.MACH3
     internal class ToggleModel : ModelObject
     {
         public bool IsOn => Sensor.Detect != this.InverseSensor;
-        private Mach3Sensor Sensor { get; set; }
+        private SensorModel Sensor { get; set; }
         private readonly bool InverseSensor = false;
 
         private Mach3Toggle Mach3Toggle { get; }
 
-        public ToggleModel(Mach3Toggle mach3Toggle, Mach3Sensor sensor)
+        public ToggleModel(Mach3Toggle mach3Toggle, SensorModel sensor)
         {
             this.Sensor = sensor;
             this.Mach3Toggle = mach3Toggle;

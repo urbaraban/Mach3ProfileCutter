@@ -10,9 +10,11 @@
     <DockPanel Grid.Column="1" 
                    LastChildFill="True"
                    Grid.Row="1">
-        <Button DockPanel.Dock="Right" MinWidth="30" Content="0"/>
+        <Button DockPanel.Dock="Right"
+                Command="{Binding SetZeroCommand}"
+                MinWidth="30" Content="0"/>
         <TextBox d:Text="9999.00"
-                 Text="{Binding Postition}"
+                 Text="{Binding Position}"
                  TextAlignment="Center" VerticalContentAlignment="Center" DockPanel.Dock="Left"/>
     </DockPanel>
 </UserControl>

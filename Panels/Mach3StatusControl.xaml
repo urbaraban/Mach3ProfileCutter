@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:model="clr-namespace:ProfileCutter.Model" xmlns:controls="clr-namespace:ProfileCutter.Controls"
+             xmlns:model="clr-namespace:ProfileCutter.Model" xmlns:controls="clr-namespace:ProfileCutter.Controls" xmlns:panels="clr-namespace:ProfileCutter.Panels"
              d:DataContext="{d:DesignInstance Type=model:CutterModel}"
              mc:Ignorable="d"
              d:DesignHeight="150" d:DesignWidth="500">
@@ -17,6 +17,10 @@
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
+        <Style x:Key="AxisControl" TargetType="controls:AxisControl">
+            <Setter Property="Margin" Value="2"/>
+        </Style>
+        <panels:BoolColorConverter x:Key="BoolColor"/>
     </UserControl.Resources>
     <Grid Background="LightGray">
         <Grid.ColumnDefinitions>
@@ -30,21 +34,26 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
-            <RowDefinition Height="2*"/>
+            <RowDefinition Height="1.5*"/>
             <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
         <ItemsControl ItemsSource="{Binding Sensors}"
-                      Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4">
-            <ItemsControl.Template>
-                <ControlTemplate>
-                    <StackPanel Margin="3"/>
-                </ControlTemplate>
-            </ItemsControl.Template>
+                      d:ItemsSource="{d:SampleData}"
+                      Grid.Row="2" Grid.Column="1" 
+                      Grid.ColumnSpan="6">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" Margin="3"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Border Background="White"
+                    <Border Background="{Binding Detect, Converter={StaticResource BoolColor}}"
+                            Margin="3"
                             Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}">
-                        <TextBlock Text="{Binding Name}"/>
+                        <TextBlock Text="{Binding Name}"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"/>
                     </Border>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
@@ -54,24 +63,27 @@
                Grid.Row="1"
                Grid.Column="0"
                Style="{StaticResource AxisName}"/>
-        <Label Grid.Column="1" Content="000000" Style="{StaticResource StepLabel}"/>
+        <Label Grid.Column="1" Content="{Binding X.Steps}" Style="{StaticResource StepLabel}"/>
         <controls:AxisControl Grid.Column="1" Grid.Row="1"
+                              Style="{StaticResource AxisControl}"
                               DataContext="{Binding X}"/>
         
         <Label Content="Y:"
                Grid.Row="1"
                Grid.Column="2"
                Style="{StaticResource AxisName}"/>
-        <Label Grid.Column="3" Content="000000" Style="{StaticResource StepLabel}"/>
+        <Label Grid.Column="3" Content="{Binding Y.Steps}" Style="{StaticResource StepLabel}"/>
         <controls:AxisControl Grid.Column="3" Grid.Row="1"
+                              Style="{StaticResource AxisControl}"
                               DataContext="{Binding Y}"/>
 
         <Label Content="Z:"
                Grid.Row="1"
                Grid.Column="4"
                Style="{StaticResource AxisName}"/>
-        <Label Grid.Column="5" Content="000000" Style="{StaticResource StepLabel}"/>
+        <Label Grid.Column="5" Content="{Binding Z.Steps}" Style="{StaticResource StepLabel}"/>
         <controls:AxisControl Grid.Column="5" Grid.Row="1"
+                              Style="{StaticResource AxisControl}"
                               DataContext="{Binding Z}"/>
 
         <DockPanel Grid.Column="6"

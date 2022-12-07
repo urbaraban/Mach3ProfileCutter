@@ -99,7 +99,6 @@
   <ItemGroup>
     <Compile Include="Model\MACH3\AxisModel.cs" />
     <Compile Include="Model\CutterModel.cs" />
-    <Compile Include="Model\MACH3\Mach3SensorPoller.cs" />
     <Compile Include="Model\ModelObject.cs" />
     <Compile Include="Model\MACH3\SensorModel.cs" />
     <Compile Include="Model\MACH3\ToggleModel.cs" />

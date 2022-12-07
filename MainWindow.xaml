@@ -6,33 +6,31 @@
         xmlns:local="clr-namespace:ProfileCutter" xmlns:panels="clr-namespace:ProfileCutter.Panels"
         mc:Ignorable="d"
         Title="MainWindow" Height="550" Width="550">
+    <Window.Resources>
+        <panels:ManualPanel x:Key="ManualPage"/>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="100"/>
             <RowDefinition/>
-            <RowDefinition Height="100"/>
+            <RowDefinition Height="130"/>
         </Grid.RowDefinitions>
         <Button Content="STOP"
                 Grid.Row="0"
                 Grid.RowSpan="1"/>
-        <TabPanel Grid.RowSpan="1"
-                  Grid.Row="1">
+        <TabControl Margin="5"
+                    Grid.RowSpan="1"
+                    Grid.Row="1">
             <TabItem Header="Ручной">
-                <TabItem.Content>
-                    <panels:ManualPanel/>
-                </TabItem.Content>
+                <panels:ManualPanel/>
             </TabItem>
             <TabItem Header="По программе">
-                <TabItem.Content>
-                    <panels:OnProgrammPanel/>
-                </TabItem.Content>
+                <panels:OnProgrammPanel/>
             </TabItem>
             <TabItem Header="Настройки">
-                <TabItem.Content>
-                    <panels:SettingPanel/>
-                </TabItem.Content>
+                <panels:SettingPanel/>
             </TabItem>
-        </TabPanel>
+        </TabControl>
         <panels:Mach3StatusControl Grid.Row="2"/>
     </Grid>
 </Window>

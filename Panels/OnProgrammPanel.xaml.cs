@@ -18,7 +18,7 @@ namespace ProfileCutter.Panels
     /// <summary>
     /// Логика взаимодействия для OnProgrammPanel.xaml
     /// </summary>
-    public partial class OnProgrammPanel : Page
+    public partial class OnProgrammPanel : UserControl
     {
         public OnProgrammPanel()
         {

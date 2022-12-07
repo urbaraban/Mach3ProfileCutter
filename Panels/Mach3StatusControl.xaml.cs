@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,23 @@ namespace ProfileCutter.Panels
         public Mach3StatusControl()
         {
             InitializeComponent();
+        }
+    }
+
+    public class BoolColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is bool detect && detect == true)
+            {
+                return Brushes.Red;
+            }
+            return Brushes.WhiteSmoke;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
         }
     }
 }
