@@ -3,11 +3,96 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:ProfileCutter.Panels"
+      xmlns:local="clr-namespace:ProfileCutter.Panels" xmlns:model="clr-namespace:ProfileCutter.Model"
+      d:DataContext="{d:DesignInstance Type=model:CutterModel}"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Style TargetType="Label" x:Key="Labels">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="24" />
+        </Style>
+        <Style TargetType="TextBox" x:Key="TxtBoxes">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="FontSize" Value="24" />
+            <Setter Property="TextWrapping" Value="NoWrap"/>
+        </Style>
+    </UserControl.Resources>
 
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="70"/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Label Content="X:" 
+               Grid.Row="1"
+               Style="{StaticResource ResourceKey=Labels}"/>
+        <Label Content="Y:" 
+            Grid.Row="2"
+            Style="{StaticResource ResourceKey=Labels}"/>
+        <Label Content="Z:" 
+            Grid.Row="3"
+            Style="{StaticResource ResourceKey=Labels}"/>
+        <Label Content="Скорость"
+            Style="{StaticResource ResourceKey=Labels}" Grid.Column="1"/>
+        <Label Content="Шаг"
+            Style="{StaticResource ResourceKey=Labels}" Grid.Column="2"/>
+        <Label Content="Максимум"
+            Style="{StaticResource ResourceKey=Labels}" Grid.Column="3"/>
+        <TextBox Grid.Column="1" Grid.Row="1"
+                 Text="{Binding X.Speed}"
+                 Style="{StaticResource TxtBoxes}"/>
+        <TextBox Grid.Column="2" Grid.Row="1"
+                 Text="{Binding X.StPerMillimetre}"
+                 Style="{StaticResource TxtBoxes}"/>
+        <TextBox Grid.Column="3" Grid.Row="1"
+                 Text="{Binding X.MaxPosition}"
+                 Style="{StaticResource TxtBoxes}"/>
         
+        <TextBox Grid.Column="1" Grid.Row="2" 
+                 Text="{Binding Y.Speed}"
+                 Style="{StaticResource TxtBoxes}"/>
+        <TextBox Grid.Column="2" Grid.Row="2"
+                 Text="{Binding Y.StPerMillimetre}"
+                 Style="{StaticResource TxtBoxes}"/>
+        <TextBox Grid.Column="3" Grid.Row="2"
+                 Text="{Binding Y.MaxPosition}"
+                 Style="{StaticResource TxtBoxes}"/>
+
+        <TextBox Grid.Column="1" Grid.Row="3"
+                 Text="{Binding Z.Speed}"
+                 Style="{StaticResource TxtBoxes}"/>
+        <TextBox Grid.Column="2" Grid.Row="3"
+                 Text="{Binding Z.StPerMillimetre}"
+                 Style="{StaticResource TxtBoxes}"/>
+        <TextBox Grid.Column="3" Grid.Row="3"
+                 Text="{Binding Z.MaxPosition}"
+                 Style="{StaticResource TxtBoxes}"/>
+        
+        <Label Content="Пила диаметр"
+               Style="{StaticResource ResourceKey=Labels}" Grid.Column="1" Grid.Row="4"/>
+        <TextBox Grid.Column="1" Grid.Row="5" 
+                 Style="{StaticResource TxtBoxes}" />
+        <Label Content="Прижим время"
+               Style="{StaticResource ResourceKey=Labels}" Grid.Column="3" Grid.Row="4"/>
+        <TextBox Grid.Column="3" Grid.Row="5"
+                 Style="{StaticResource TxtBoxes}"/>
+        <Button Grid.Column="1" 
+                Grid.Row="6"
+                Content="Сохранить"
+                Margin="10"/>
     </Grid>
 </UserControl>

@@ -3,9 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ProfileCutter" xmlns:panels="clr-namespace:ProfileCutter.Panels"
+        xmlns:local="clr-namespace:ProfileCutter"
+        xmlns:panels="clr-namespace:ProfileCutter.Panels" 
+        xmlns:model="clr-namespace:ProfileCutter.Model"
         mc:Ignorable="d"
-        Title="MainWindow" Height="550" Width="550">
+        d:DataContext="{d:DesignInstance Type=model:CutterModel}"
+        Title="MainWindow" Height="650" Width="650"
+        WindowStyle="ToolWindow">
     <Window.Resources>
         <panels:ManualPanel x:Key="ManualPage"/>
     </Window.Resources>
@@ -16,6 +20,11 @@
             <RowDefinition Height="130"/>
         </Grid.RowDefinitions>
         <Button Content="STOP"
+                Background="IndianRed"
+                FontSize="48"
+                Foreground="White"
+                FontWeight="DemiBold"
+                Command="{Binding StopCommand}"
                 Grid.Row="0"
                 Grid.RowSpan="1"/>
         <TabControl Margin="5"

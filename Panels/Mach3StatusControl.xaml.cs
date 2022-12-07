@@ -33,7 +33,7 @@ namespace ProfileCutter.Panels
         {
             if (value is bool detect && detect == true)
             {
-                return Brushes.Red;
+                return Brushes.IndianRed;
             }
             return Brushes.WhiteSmoke;
         }
