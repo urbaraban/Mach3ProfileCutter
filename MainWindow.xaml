@@ -5,13 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProfileCutter"
         xmlns:panels="clr-namespace:ProfileCutter.Panels" 
-        xmlns:model="clr-namespace:ProfileCutter.Model"
+        xmlns:model="clr-namespace:ProfileCutter.Model" 
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=model:CutterModel}"
         Title="MainWindow" Height="650" Width="650"
         WindowStyle="ToolWindow">
     <Window.Resources>
-        <panels:ManualPanel x:Key="ManualPage"/>
+        <ResourceDictionary>
+            <panels:ManualPanel x:Key="ManualPage"/>
+        </ResourceDictionary>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -24,9 +26,7 @@
                 FontSize="48"
                 Foreground="White"
                 FontWeight="DemiBold"
-                Command="{Binding StopCommand}"
-                Grid.Row="0"
-                Grid.RowSpan="1"/>
+                Command="{Binding StopCommand}"/>
         <TabControl Margin="5"
                     Grid.RowSpan="1"
                     Grid.Row="1">

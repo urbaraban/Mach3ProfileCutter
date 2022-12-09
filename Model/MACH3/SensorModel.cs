@@ -1,11 +1,14 @@
 ﻿using Mach3_netframework.MACH3;
+using System;
 
 namespace ProfileCutter.Model.MACH3
 {
-    internal class SensorModel : ModelObject
+    public class SensorModel : ModelObject
     {
+        public event EventHandler<bool> StatusChanged;
         public string Name { get; }
         public bool Detect => Poller.pins[Num] == Check;
+        private bool lastdetect = false;
         private Mach3SensorPoller Poller { get; }
         private int Num { get; }
         private byte Check { get; }
@@ -16,11 +19,18 @@ namespace ProfileCutter.Model.MACH3
             this.Poller = sensor;
             this.Num = num;
             this.Check = check;
+
+            this.Poller.UpdateSensor += Poller_UpdateSensor;
         }
 
-        private void Mach3Sensor_SensorChanged(object sender, bool e)
+        private void Poller_UpdateSensor(object sender, System.EventArgs e)
         {
             OnPropertyChanged(nameof(Detect));
+            if (this.Detect != lastdetect)
+            {
+                lastdetect = this.Detect;
+                StatusChanged?.Invoke(this, this.Detect);
+            }
         }
     }
 }

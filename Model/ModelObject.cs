@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace ProfileCutter.Model
 {
-    internal abstract class ModelObject : INotifyPropertyChanged
+    public abstract class ModelObject : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)

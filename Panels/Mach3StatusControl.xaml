@@ -89,7 +89,8 @@
         <DockPanel Grid.Column="6"
                    Grid.Row="1"
                    Margin="2">
-            <Button Content="Домой" />
+            <Button Content="Домой"
+                    Command="{Binding HomeCommand}"/>
         </DockPanel>
     </Grid>
 </UserControl>
