@@ -137,10 +137,10 @@ namespace ProfileCutter.Model.MACH3
         {
             if (element != null)
             {
-                this.StPerMillimetre = int.Parse(element.Attribute("SPM").Value, CultureInfo.InvariantCulture);
-                this.Speed = double.Parse(element.Attribute("Speed").Value, CultureInfo.InvariantCulture);
-                this.Offset = double.Parse(element.Attribute("Offset").Value, CultureInfo.InvariantCulture);
-                this.MaxPosition = double.Parse(element.Attribute("Maximum").Value, CultureInfo.InvariantCulture);
+                this.StPerMillimetre = double.Parse(element.Attribute("SPM").Value.Replace(',', '.'), CultureInfo.InvariantCulture);
+                this.Speed = double.Parse(element.Attribute("Speed").Value.Replace(',', '.'), CultureInfo.InvariantCulture);
+                this.Offset = double.Parse(element.Attribute("Offset").Value.Replace(',', '.'), CultureInfo.InvariantCulture);
+                this.MaxPosition = double.Parse(element.Attribute("Maximum").Value.Replace(',', '.'), CultureInfo.InvariantCulture);
             }
         }
 

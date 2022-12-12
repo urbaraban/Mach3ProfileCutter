@@ -1,0 +1,18 @@
+﻿<UserControl x:Class="ProfileCutter.Panels.LogsPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:model="clr-namespace:ProfileCutter.Model"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=model:CutterModel}"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <ListBox ItemsSource="{Binding LogsMessages}" 
+                 Margin="15"/>
+    </Grid>
+</UserControl>

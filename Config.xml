@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Cutter>
+  <Programms />
+  <Mach3>
+    <Axises>
+      <X SPM="40.8" Speed="30" Offset="0" Maximum="2500" />
+      <Y SPM="40" Speed="35" Offset="0" Maximum="1050" />
+      <Z SPM="1014" Speed="5" Offset="300" Maximum="263" />
+    </Axises>
+  </Mach3>
+</Cutter>

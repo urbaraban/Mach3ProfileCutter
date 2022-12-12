@@ -3,6 +3,7 @@ using Microsoft.Xaml.Behaviors.Core;
 using ProfileCutter.Configuration;
 using ProfileCutter.Model.MACH3;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -18,11 +19,18 @@ namespace ProfileCutter.Model
         public ToggleModel Saw { get; }
         public ToggleModel Press { get; }
 
-        private Mach3 Mach3 = new Mach3();
+        public int SensorsReqest => Mach3.SensorPoller.Request;
+
+        private Mach3 Mach3;
         public List<SensorModel> Sensors { get; } = new List<SensorModel>();
+
+        public ObservableCollection<string> LogsMessages { get; } = new ObservableCollection<string>();
 
         public CutterModel() 
         {
+            this.Mach3 = new Mach3(LogMessage);
+
+            Mach3.SensorPoller.UpdateSensor += SensorPoller_UpdateSensor;
             Sensors.Add(new SensorModel("Пр2", Mach3.SensorPoller, 7, 1));
             Sensors.Add(new SensorModel("Пр1", Mach3.SensorPoller, 4, 0));
             Sensors.Add(new SensorModel("X", Mach3.SensorPoller, 5, 0));
@@ -39,7 +47,22 @@ namespace ProfileCutter.Model
             Config.Load(this);
         }
 
-        public ICommand StopCommand => new ActionCommand(() => this.Mach3.IsTurn = false);
+        private void SensorPoller_UpdateSensor(object sender, System.EventArgs e)
+        {
+            OnPropertyChanged(nameof(SensorsReqest));
+        }
+
+        private void LogMessage(string message)
+        {
+            LogsMessages.Add(message);
+            OnPropertyChanged(nameof(LogsMessages));
+        }
+
+        public ICommand StopCommand => new ActionCommand(() =>
+        {
+            this.Saw.Stop();
+            this.Mach3.IsTurn = false;
+        });
 
         public ICommand UpCommand => new ActionCommand(async () => await TryMoveAxis(Y, 0));
         public ICommand DownCommand => new ActionCommand(async () => await TryMoveAxis(Y, this.Y.MaxPosition));

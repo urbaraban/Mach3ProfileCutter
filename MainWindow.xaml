@@ -39,6 +39,9 @@
             <TabItem Header="Настройки">
                 <panels:SettingPanel/>
             </TabItem>
+            <TabItem Header="Logs">
+                <panels:LogsPanel/>
+            </TabItem>
         </TabControl>
         <panels:Mach3StatusControl Grid.Row="2"/>
     </Grid>

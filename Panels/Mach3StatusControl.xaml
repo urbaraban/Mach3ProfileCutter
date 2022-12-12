@@ -40,7 +40,7 @@
         <ItemsControl ItemsSource="{Binding Sensors}"
                       d:ItemsSource="{d:SampleData}"
                       Grid.Row="2" Grid.Column="1" 
-                      Grid.ColumnSpan="6">
+                      Grid.ColumnSpan="5">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal" Margin="3"/>
@@ -58,7 +58,10 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-
+        <Label Content="{Binding SensorsReqest}"
+               VerticalContentAlignment="Center"
+               Grid.Row="2"
+               Grid.Column="6"/>
         <Label Content="X:"
                Grid.Row="1"
                Grid.Column="0"
