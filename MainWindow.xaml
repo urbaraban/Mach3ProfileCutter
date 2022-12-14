@@ -9,7 +9,24 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=model:CutterModel}"
         Title="MainWindow" Height="650" Width="650"
+        KeyboardNavigation.DirectionalNavigation="None"
         WindowStyle="ToolWindow">
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding StopCommand}"
+                    Gesture="Esc"/>
+        <KeyBinding Command="{Binding LeftCommand}"
+                    Gesture="LEFT"/>
+        <KeyBinding Command="{Binding RightCommand}"
+                    Gesture="Right"/>
+        <KeyBinding Command="{Binding UpCommand}"
+                    Gesture="Up"/>
+        <KeyBinding Command="{Binding DownCommand}"
+                    Gesture="Down"/>
+        <KeyBinding Command="{Binding SawUp}"
+                    Gesture="PageUp"/>
+        <KeyBinding Command="{Binding SawDown}"
+                    Gesture="PageDown"/>
+    </Window.InputBindings>
     <Window.Resources>
         <ResourceDictionary>
             <panels:ManualPanel x:Key="ManualPage"/>

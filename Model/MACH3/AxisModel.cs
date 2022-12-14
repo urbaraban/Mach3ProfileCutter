@@ -2,6 +2,7 @@
 using Microsoft.Xaml.Behaviors.Core;
 using System;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
 
@@ -17,7 +18,7 @@ namespace ProfileCutter.Model.MACH3
         {
             get
             {
-                double result = this.AxisMotor.Position / this.StPerMillimetre + this.Offset / 2 - StartPosition;
+                double result = (this.AxisMotor.Position - this.StartPosition) / this.StPerMillimetre + this.Offset / 2;
                 if (InversePosition == true)
                 {
                     result = this.MaxPosition - result;
@@ -34,7 +35,7 @@ namespace ProfileCutter.Model.MACH3
 
         public string Name { get; }
 
-        public double StartPosition
+        public long StartPosition
         {
             get => startposition;
             set
@@ -45,7 +46,7 @@ namespace ProfileCutter.Model.MACH3
                 OnPropertyChanged(nameof(Steps));
             }
         }
-        private double startposition = 0;
+        private long startposition = 0;
 
         public double Offset
         {
@@ -75,6 +76,7 @@ namespace ProfileCutter.Model.MACH3
             {
                 stpermillimetre = value;
                 OnPropertyChanged(nameof(StPerMillimetre));
+                OnPropertyChanged(nameof(Position));
             }
         }
         public double stpermillimetre = 1;
@@ -99,6 +101,7 @@ namespace ProfileCutter.Model.MACH3
             this.AxisMotor = mach3Axis;
             this.Offset = offset;
             this.InversePosition = inverse;
+            this._sensor = sensor;
             sensor.StatusChanged += Sensor_StatusChanged; ;
         }
 
@@ -107,21 +110,44 @@ namespace ProfileCutter.Model.MACH3
             if (e == true)
             {
                 this.AxisMotor.SetZero();
+                this.StartPosition = 0;
             }
         }
 
         public void GoToPosition(double value)
         {
-            long finish = (long)(value * this.StPerMillimetre);
-            int vector = value < this.Position ? -1 : 1;
-            this.AxisMotor.TryStart = true;
-            while (this.AxisMotor.ThisStop == false && finish - Steps != 0)
+            long finish = GetPositionInStep(value);
+            if (Math.Abs(finish - this.AxisMotor.Position) > 1)
+            {
+                int vector = value < this.Position ? -1 : 1;
+                this.AxisMotor.TryStart = true;
+                while (this.AxisMotor.ThisStop == false && (
+                    (vector > 0 && this._sensor.Detect == true)
+                    || Math.Abs(finish - Steps) > 0))
+                {
+                    this.AxisMotor.TryStart = true;
+                    this.AxisMotor.Tic(vector, this.Delay);
+                    OnPropertyChanged(nameof(Position));
+                    OnPropertyChanged(nameof(Steps));
+                }
+            }
+        }
+
+        public void GoHome()
+        {
+            while(this.AxisMotor.ThisStop == false && this._sensor.Detect == false)
             {
                 this.AxisMotor.TryStart = true;
-                this.AxisMotor.Tic(vector, this.Delay);
+                this.AxisMotor.Tic(-1, this.Delay);
                 OnPropertyChanged(nameof(Position));
                 OnPropertyChanged(nameof(Steps));
             }
+        }
+
+        private long GetPositionInStep(double value)
+        {
+            long result = (long)(value * this.stpermillimetre) + this.startposition;
+            return result;
         }
 
         public XElement GetAxisXElement()
@@ -144,7 +170,7 @@ namespace ProfileCutter.Model.MACH3
             }
         }
 
-        public ICommand SetZeroCommand => new ActionCommand(() => this.StartPosition = this.Position);
+        public ICommand SetZeroCommand => new ActionCommand(() => this.StartPosition = this.Steps);
 
     }
 }

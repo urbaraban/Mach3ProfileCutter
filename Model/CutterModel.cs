@@ -4,6 +4,7 @@ using ProfileCutter.Configuration;
 using ProfileCutter.Model.MACH3;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -19,7 +20,16 @@ namespace ProfileCutter.Model
         public ToggleModel Saw { get; }
         public ToggleModel Press { get; }
 
-        public int SensorsReqest => Mach3.SensorPoller.Request;
+        public byte SensorsReqest
+        {
+            get => _sensorrequest;
+            set
+            {
+                _sensorrequest = value;
+                OnPropertyChanged(nameof(SensorsReqest));
+            }
+        }
+        private byte _sensorrequest;
 
         private Mach3 Mach3;
         public List<SensorModel> Sensors { get; } = new List<SensorModel>();
@@ -30,12 +40,12 @@ namespace ProfileCutter.Model
         {
             this.Mach3 = new Mach3(LogMessage);
 
-            Mach3.SensorPoller.UpdateSensor += SensorPoller_UpdateSensor;
-            Sensors.Add(new SensorModel("Пр2", Mach3.SensorPoller, 7, 1));
-            Sensors.Add(new SensorModel("Пр1", Mach3.SensorPoller, 4, 0));
-            Sensors.Add(new SensorModel("X", Mach3.SensorPoller, 5, 0));
-            Sensors.Add(new SensorModel("Y", Mach3.SensorPoller, 3, 0));
-            Sensors.Add(new SensorModel("Z", Mach3.SensorPoller, 6, 0));
+            Mach3.SensorPoller.UpdateRequest += SensorPoller_UpdateRequest;
+            Sensors.Add(new SensorModel("Пр2", Mach3.SensorPoller, 3, true));
+            Sensors.Add(new SensorModel("Пр1", Mach3.SensorPoller, 4, true));
+            Sensors.Add(new SensorModel("X", Mach3.SensorPoller, 5, true));
+            Sensors.Add(new SensorModel("Y", Mach3.SensorPoller, 7, false));
+            Sensors.Add(new SensorModel("Z", Mach3.SensorPoller, 6, true));
 
             this.Saw = new ToggleModel(Mach3.Spindle, null);
             this.Press = new ToggleModel(Mach3.Clamp, Sensors[1]);
@@ -47,9 +57,10 @@ namespace ProfileCutter.Model
             Config.Load(this);
         }
 
-        private void SensorPoller_UpdateSensor(object sender, System.EventArgs e)
+        private void SensorPoller_UpdateRequest(object sender, byte e)
         {
-            OnPropertyChanged(nameof(SensorsReqest));
+            this.SensorsReqest = e;
+            Thread.Sleep(10);
         }
 
         private void LogMessage(string message)
@@ -93,9 +104,9 @@ namespace ProfileCutter.Model
             {
                 StopCommand.Execute(null);
                 this.Mach3.IsTurn = true;
-                Z.GoToPosition(double.MinValue);
-                Y.GoToPosition(double.MinValue);
-                X.GoToPosition(double.MinValue);
+                Z.GoHome();
+                Y.GoHome();
+                X.GoHome();
             });
         });
     }

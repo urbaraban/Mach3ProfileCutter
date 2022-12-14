@@ -1,5 +1,6 @@
 ﻿using Mach3_netframework.MACH3;
 using System;
+using System.Threading;
 
 namespace ProfileCutter.Model.MACH3
 {
@@ -11,9 +12,9 @@ namespace ProfileCutter.Model.MACH3
         private bool lastdetect = false;
         private Mach3SensorPoller Poller { get; }
         private int Num { get; }
-        private byte Check { get; }
+        private bool Check { get; }
 
-        public SensorModel(string name, Mach3SensorPoller sensor, int num, byte check) 
+        public SensorModel(string name, Mach3SensorPoller sensor, int num, bool check) 
         {
             this.Name = name;
             this.Poller = sensor;
@@ -23,13 +24,17 @@ namespace ProfileCutter.Model.MACH3
             this.Poller.UpdateSensor += Poller_UpdateSensor;
         }
 
-        private void Poller_UpdateSensor(object sender, System.EventArgs e)
+        private void Poller_UpdateSensor(object sender, int e)
         {
-            OnPropertyChanged(nameof(Detect));
-            if (this.Detect != lastdetect)
+            if (e == this.Num)
             {
-                lastdetect = this.Detect;
-                StatusChanged?.Invoke(this, this.Detect);
+                if (this.Detect != lastdetect)
+                {
+                    OnPropertyChanged(nameof(Detect));
+                    lastdetect = this.Detect;
+                    StatusChanged?.Invoke(this, this.Detect);
+                    Thread.Sleep(1);
+                }
             }
         }
     }
