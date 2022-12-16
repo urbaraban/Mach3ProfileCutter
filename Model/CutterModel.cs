@@ -39,16 +39,20 @@ namespace ProfileCutter.Model
         public CutterModel() 
         {
             this.Mach3 = new Mach3(LogMessage);
+            Thread.Sleep(10);
 
             Mach3.SensorPoller.UpdateRequest += SensorPoller_UpdateRequest;
-            Sensors.Add(new SensorModel("Пр2", Mach3.SensorPoller, 3, true));
-            Sensors.Add(new SensorModel("Пр1", Mach3.SensorPoller, 4, true));
-            Sensors.Add(new SensorModel("X", Mach3.SensorPoller, 5, true));
-            Sensors.Add(new SensorModel("Y", Mach3.SensorPoller, 7, false));
-            Sensors.Add(new SensorModel("Z", Mach3.SensorPoller, 6, true));
+            Sensors.Add(new SensorModel("Пр1", Mach3.SensorPoller, 3, 0));
+            Sensors.Add(new SensorModel("Пр2", Mach3.SensorPoller, 4, 0));
+            Sensors.Add(new SensorModel("X", Mach3.SensorPoller, 5, 0));
+            Sensors.Add(new SensorModel("Y", Mach3.SensorPoller, 7, 1));
+            Sensors.Add(new SensorModel("Z", Mach3.SensorPoller, 6, 0));
 
-            this.Saw = new ToggleModel(Mach3.Spindle, null);
-            this.Press = new ToggleModel(Mach3.Clamp, Sensors[1]);
+            this.Saw = new ToggleModel(Mach3.Spindle, null, false, 12000);
+            this.Saw.Stop();
+            this.Press = new ToggleModel(Mach3.Clamp, new SensorModel[] { Sensors[0], Sensors[1] }, true, 2000);
+            if (this.Press.IsOn == true) 
+                this.Press.Stop();
 
             this.X = new AxisModel("X", Mach3.X, Sensors[2], false);
             this.Y = new AxisModel("Y", Mach3.Y, Sensors[3], false);

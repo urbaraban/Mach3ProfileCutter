@@ -2,7 +2,6 @@
 using Microsoft.Xaml.Behaviors.Core;
 using System;
 using System.Globalization;
-using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
 
@@ -11,7 +10,7 @@ namespace ProfileCutter.Model.MACH3
     public class AxisModel : ModelObject
     {
         public long Steps => this.AxisMotor.Position;
-        public long Delay => (long)(500000 / (Speed * StPerMillimetre));
+        public long Delay => (long)(1000000 / (Speed * StPerMillimetre));
 
         public bool InversePosition { get; set; } = false;
         public double Position
@@ -92,6 +91,17 @@ namespace ProfileCutter.Model.MACH3
         }
         private double speed = 1;
 
+        public bool IsMoving
+        {
+            get => ismoving;
+            set
+            {
+                ismoving = value;
+                OnPropertyChanged(nameof(IsMoving));
+            }
+        }
+        private bool ismoving;
+
         private SensorModel _sensor;
 
         private Mach3AxisMotor AxisMotor { get; }
@@ -114,34 +124,41 @@ namespace ProfileCutter.Model.MACH3
             }
         }
 
+        private bool AxisStop(MoveVector vector)
+        {
+            return this.AxisMotor.ThisStop == true &&
+                ((vector == MoveVector.UP && this.Steps < this.AxisMotor.Maximum) ||
+                (vector == MoveVector.DOWN && this._sensor.Detect == false));
+        }
+
         public void GoToPosition(double value)
         {
             long finish = GetPositionInStep(value);
-            if (Math.Abs(finish - this.AxisMotor.Position) > 1)
+            MoveVector vector = value < this.Position ? MoveVector.DOWN : MoveVector.UP;
+            if (Math.Abs(finish - this.Steps) > 0)
             {
-                int vector = value < this.Position ? -1 : 1;
-                this.AxisMotor.TryStart = true;
-                while (this.AxisMotor.ThisStop == false && (
-                    (vector > 0 && this._sensor.Detect == true)
-                    || Math.Abs(finish - Steps) > 0))
+                this.IsMoving = true;
+                while (AxisStop(vector) == false && Math.Abs(finish - this.Steps) > 0)
                 {
-                    this.AxisMotor.TryStart = true;
-                    this.AxisMotor.Tic(vector, this.Delay);
-                    OnPropertyChanged(nameof(Position));
-                    OnPropertyChanged(nameof(Steps));
+                    this.Tic(vector);
                 }
             }
+            this.IsMoving = false;
         }
 
         public void GoHome()
         {
             while(this.AxisMotor.ThisStop == false && this._sensor.Detect == false)
             {
-                this.AxisMotor.TryStart = true;
-                this.AxisMotor.Tic(-1, this.Delay);
-                OnPropertyChanged(nameof(Position));
-                OnPropertyChanged(nameof(Steps));
+                this.Tic(MoveVector.DOWN);
             }
+        }
+
+        private void Tic(MoveVector vector)
+        {
+            this.AxisMotor.Tic(vector, this.Delay);
+            OnPropertyChanged(nameof(Position));
+            OnPropertyChanged(nameof(Steps));
         }
 
         private long GetPositionInStep(double value)

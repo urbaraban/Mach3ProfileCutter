@@ -12,9 +12,9 @@ namespace ProfileCutter.Model.MACH3
         private bool lastdetect = false;
         private Mach3SensorPoller Poller { get; }
         private int Num { get; }
-        private bool Check { get; }
+        private int Check { get; }
 
-        public SensorModel(string name, Mach3SensorPoller sensor, int num, bool check) 
+        public SensorModel(string name, Mach3SensorPoller sensor, int num, int check) 
         {
             this.Name = name;
             this.Poller = sensor;

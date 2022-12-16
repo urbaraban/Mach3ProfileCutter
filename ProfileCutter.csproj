@@ -19,7 +19,7 @@
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>Z:\soft\ProfileCutter\</PublishUrl>
+    <PublishUrl>E:\ProfileCutter\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -31,7 +31,7 @@
     <MapFileExtensions>false</MapFileExtensions>
     <TargetCulture>ru</TargetCulture>
     <DisallowUrlActivation>true</DisallowUrlActivation>
-    <ApplicationRevision>13</ApplicationRevision>
+    <ApplicationRevision>18</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>

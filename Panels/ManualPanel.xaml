@@ -21,6 +21,9 @@
             <Setter Property="Padding" Value="0"/>
         </Style>
         <Style TargetType="{x:Type ToggleButton}" x:Key="RedToggle">
+            <Setter Property="BorderThickness" Value="3"/>
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="Padding" Value="20"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ToggleButton">
@@ -107,13 +110,16 @@
                       Grid.Column="7"
                       Grid.Row="1"
                       VerticalAlignment="Center"
-                      Command="{Binding Saw.}"
+                      IsChecked="{Binding Saw.IsOn}"
+                      Command="{Binding Saw.ToggleCommand}"
                       Height="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"
                       Style="{StaticResource RedToggle}"/>
 
         <ToggleButton Content="Прижим"
                       Grid.Column="7"
                       Grid.Row="3"
+                      IsChecked="{Binding Press.IsOn}"
+                      Command="{Binding Press.ToggleCommand}"
                       VerticalAlignment="Center"
                       Height="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"
                       Style="{StaticResource RedToggle}"/>
