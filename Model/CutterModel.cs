@@ -2,6 +2,7 @@
 using Microsoft.Xaml.Behaviors.Core;
 using ProfileCutter.Configuration;
 using ProfileCutter.Model.MACH3;
+using ProfileCutter.Model.Programms;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
@@ -34,6 +35,8 @@ namespace ProfileCutter.Model
         private Mach3 Mach3;
         public List<SensorModel> Sensors { get; } = new List<SensorModel>();
 
+        public ProgrammManager CutProgramms {get;} = new ProgrammManager();
+
         public ObservableCollection<string> LogsMessages { get; } = new ObservableCollection<string>();
 
         public CutterModel() 
@@ -58,7 +61,7 @@ namespace ProfileCutter.Model
             this.Y = new AxisModel("Y", Mach3.Y, Sensors[3], false);
             this.Z = new AxisModel("Z", Mach3.Z, Sensors[4], true, 300);
 
-            Config.Load(this);
+            ReadWrite.Load(this);
         }
 
         private void SensorPoller_UpdateRequest(object sender, byte e)
@@ -85,7 +88,7 @@ namespace ProfileCutter.Model
         public ICommand RightCommand => new ActionCommand(async () => await TryMoveAxis(X, 0));
 
         public ICommand SawUp => new ActionCommand(async () => await TryMoveAxis(Z, 0));
-        public ICommand SawDown => new ActionCommand(async () => await TryMoveAxis(Z, this.Z.MaxPosition));
+        public ICommand SawDown => new ActionCommand(async () => await TryMoveAxis(Z, CutProgramms.SelectProgramm.Height));
 
         public async Task TryMoveAxis(AxisModel axis, double newposition)
         {
@@ -99,7 +102,7 @@ namespace ProfileCutter.Model
 
         public ICommand SaveCommand => new ActionCommand(() =>
         {
-            Config.Save(this);
+            ReadWrite.Save(this);
         });
 
         public ICommand HomeCommand => new ActionCommand(async () =>
@@ -113,19 +116,7 @@ namespace ProfileCutter.Model
                 X.GoHome();
             });
         });
-    }
 
-    internal struct Profile
-    {
-        public string Name { get; set; }
-        public double Length { get; set; }
-        public double Height { get; set; }
-
-        public Profile(string name, double length, double height)
-        {
-            this.Name = name;
-            this.Length = length;
-            this.Height = height;
-        }
+        public ICommand RunProgrammCommand => new ActionCommand(async () => await this.CutProgramms.SelectProgramm.Run(this));
     }
 }

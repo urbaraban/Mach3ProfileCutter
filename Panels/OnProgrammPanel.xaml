@@ -3,11 +3,144 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:ProfileCutter.Panels"
-      mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800">
-
+      xmlns:model="clr-namespace:ProfileCutter.Model" 
+      mc:Ignorable="d"
+      d:DataContext="{d:DesignInstance Type=model:CutterModel}"
+      d:DesignHeight="450" d:DesignWidth="600">
+    <UserControl.Resources>
+        <Style TargetType="Label" x:Key="VariableLabel">
+            <Setter Property="Margin" Value="0,0,10,0"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="MinWidth" Value="120"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <Style TargetType="Button" x:Key="RectBtn">
+            <Setter Property="Margin" Value="10,0,0,0"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Width" Value="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"/>
+        </Style>
+        <Style TargetType="DockPanel" x:Key="VariableDoc">
+            <Setter Property="Margin" Value="10,10,10,10"/>
+        </Style>
+    </UserControl.Resources>
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <DockPanel  Grid.ColumnSpan="2" Margin="5">
+            <Button DockPanel.Dock="Right"
+                    Content="X"
+                    Style="{StaticResource RectBtn}"
+                    Command="{Binding CutProgramms.RemoveProgrammCommand}"/>
+            <Button DockPanel.Dock="Right"
+                    Content="+"
+                    Style="{StaticResource RectBtn}"
+                    Command="{Binding CutProgramms.AddProgrammCommand}"/>
+            <Button DockPanel.Dock="Right"
+                    Content="S"
+                    Style="{StaticResource RectBtn}"
+                    Command="{Binding SaveCommand}"/>
+            <ComboBox DockPanel.Dock="Left"
+                      DisplayMemberPath="Display"
+                      VerticalContentAlignment="Center"
+                      IsTextSearchEnabled="False"
+                      SelectedItem="{Binding CutProgramms.SelectProgramm}"
+                      ItemsSource="{Binding CutProgramms.Programms}"/>
+        </DockPanel>
+        <DockPanel Grid.Row="3" Style="{StaticResource VariableDoc}">
+            <Label Content="Длина реза"
+                   Style="{StaticResource VariableLabel}"/>
+            <TextBox Text="{Binding CutProgramms.SelectProgramm.Length}"/>
+        </DockPanel>
+        <DockPanel Grid.Row="2" Style="{StaticResource VariableDoc}">
+            <Label Content="Интервал реза"
+                   Style="{StaticResource VariableLabel}"/>
+            <TextBox Text="{Binding CutProgramms.SelectProgramm.Interval}" />
+        </DockPanel>
+        <DockPanel Grid.Column="1"
+                   Grid.Row="1"
+                   Style="{StaticResource VariableDoc}">
+            <Label Content="Профиль"
+                   Style="{StaticResource VariableLabel}"/>
+            <Button Content="x"
+                    DockPanel.Dock="Right"
+                    Command="{Binding CutProgramms.RemoveProfileCommand}"
+                    Style="{StaticResource RectBtn}"/>
+            <Button Content="+"
+                    DockPanel.Dock="Right"
+                    Command="{Binding CutProgramms.AddProfileCommand}"
+                    Style="{StaticResource RectBtn}"/>
+            <ComboBox ItemsSource="{Binding CutProgramms.Profiles}"
+                      DisplayMemberPath="Display"
+                      Text="{Binding CutProgramms.SelectProfile.Display}"
+                      IsEditable="True"
+                      SelectedItem="{Binding CutProgramms.SelectProfile}"/>
+        </DockPanel>
+        <DockPanel Grid.Row="1"
+                   Style="{StaticResource VariableDoc}">
+            <Label Content="Высота реза"
+                   Style="{StaticResource VariableLabel}"/>
+            <TextBox Text="{Binding CutProgramms.SelectProgramm.Height}"/>
+        </DockPanel>
+        <DockPanel Grid.Row="2" Grid.Column="1"
+                   Style="{StaticResource VariableDoc}">
+            <Label Content="Длина проф."
+                   Style="{StaticResource VariableLabel}"/>
+            <TextBox Text="{Binding CutProgramms.SelectProfile.Length}"/>
+        </DockPanel>
+        <DockPanel Grid.Row="3" Grid.Column="1"
+                   Style="{StaticResource VariableDoc}">
+            <Label Content="Ширина проф."
+                   Style="{StaticResource VariableLabel}"/>
+            <TextBox Text="{Binding CutProgramms.SelectProfile.Width}"/>
+        </DockPanel>
+        <Button Content="СТАРТ"
+                Grid.Row="5"
+                Margin="3"
+                Command="{Binding RunProgrammCommand}"/>
+        <Button Content="ПАУЗА"
+                Grid.Row="5"
+                Grid.Column="1"
+                Margin="3"/>
+        <DockPanel Grid.Row="6"
+                   Grid.ColumnSpan="2"
+                   Grid.RowSpan="2">
+            <DockPanel>
+                <Label DockPanel.Dock="Top"
+                       Content="Шаг"/>
+                <TextBox Width="70"
+                         VerticalContentAlignment="Center"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding CutProgramms.SelectProgramm.StepActual}"/>
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Right">
+                <Label DockPanel.Dock="Top"
+                       Content="Всего"/>
+                <TextBox Width="70"
+                         VerticalContentAlignment="Center"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding CutProgramms.SelectProgramm.StepCount, Mode=OneWay}"/>
+            </DockPanel>
+
+            <DockPanel>
+                <Label DockPanel.Dock="Top"
+                       Content="Прогресс"/>
+                <ProgressBar Maximum="{Binding CutProgramms.SelectProgramm.StepCount, Mode=OneWay}"
+                             Value="{Binding CutProgramms.SelectProgramm.StepActual}"/>
+            </DockPanel>
+        </DockPanel>
     </Grid>
 </UserControl>

@@ -134,7 +134,8 @@ namespace ProfileCutter.Model.MACH3
         public void GoToPosition(double value)
         {
             long finish = GetPositionInStep(value);
-            MoveVector vector = value < this.Position ? MoveVector.DOWN : MoveVector.UP;
+            MoveVector vector = 
+                (value < this.Position && this.InversePosition == false) ? MoveVector.DOWN : MoveVector.UP;
             if (Math.Abs(finish - this.Steps) > 0)
             {
                 this.IsMoving = true;
