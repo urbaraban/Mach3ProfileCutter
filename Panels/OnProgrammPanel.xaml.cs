@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProfileCutter.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,14 @@ namespace ProfileCutter.Panels
         public OnProgrammPanel()
         {
             InitializeComponent();
+        }
+
+        private void ProgressBar_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (this.DataContext is CutterModel cutterModel)
+            {
+                cutterModel.CutProgramms.SelectProgramm.StepActual += (e.Delta / Math.Abs(e.Delta));
+            }
         }
     }
 }

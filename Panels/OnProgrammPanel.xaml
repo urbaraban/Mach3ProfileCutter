@@ -16,7 +16,6 @@
             <Setter Property="Padding" Value="0"/>
         </Style>
         <Style TargetType="Button" x:Key="RectBtn">
-            <Setter Property="Margin" Value="10,0,0,0"/>
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="Padding" Value="0"/>
             <Setter Property="Width" Value="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"/>
@@ -63,7 +62,7 @@
         <DockPanel Grid.Row="3" Style="{StaticResource VariableDoc}">
             <Label Content="Длина реза"
                    Style="{StaticResource VariableLabel}"/>
-            <TextBox Text="{Binding CutProgramms.SelectProgramm.Length}"/>
+            <TextBox Text="{Binding CutProgramms.SelectProgramm.Width}"/>
         </DockPanel>
         <DockPanel Grid.Row="2" Style="{StaticResource VariableDoc}">
             <Label Content="Интервал реза"
@@ -99,6 +98,10 @@
                    Style="{StaticResource VariableDoc}">
             <Label Content="Длина проф."
                    Style="{StaticResource VariableLabel}"/>
+            <Button Content="R"
+                    DockPanel.Dock="Right"
+                    Style="{StaticResource RectBtn}"
+                    Command="{Binding CutProgramms.UpdateProfileLengthCommand}" />
             <TextBox Text="{Binding CutProgramms.SelectProfile.Length}"/>
         </DockPanel>
         <DockPanel Grid.Row="3" Grid.Column="1"
@@ -115,32 +118,47 @@
                 Grid.Row="5"
                 Grid.Column="1"
                 Margin="3"/>
-        <DockPanel Grid.Row="6"
-                   Grid.ColumnSpan="2"
-                   Grid.RowSpan="2">
-            <DockPanel>
-                <Label DockPanel.Dock="Top"
-                       Content="Шаг"/>
-                <TextBox Width="70"
-                         VerticalContentAlignment="Center"
-                         HorizontalContentAlignment="Center"
-                         Text="{Binding CutProgramms.SelectProgramm.StepActual}"/>
-            </DockPanel>
-            <DockPanel DockPanel.Dock="Right">
-                <Label DockPanel.Dock="Top"
-                       Content="Всего"/>
-                <TextBox Width="70"
-                         VerticalContentAlignment="Center"
-                         HorizontalContentAlignment="Center"
-                         Text="{Binding CutProgramms.SelectProgramm.StepCount, Mode=OneWay}"/>
-            </DockPanel>
-
-            <DockPanel>
-                <Label DockPanel.Dock="Top"
-                       Content="Прогресс"/>
-                <ProgressBar Maximum="{Binding CutProgramms.SelectProgramm.StepCount, Mode=OneWay}"
-                             Value="{Binding CutProgramms.SelectProgramm.StepActual}"/>
-            </DockPanel>
-        </DockPanel>
+        <Grid Grid.Row="6"
+              Grid.ColumnSpan="2"
+              Grid.RowSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Label Grid.Column="1" Grid.Row="0"
+                   Content="Шаг"/>
+            <Label Grid.Column="2" Grid.Row="0"
+                    Content="Прогресс"/>
+            <Label Grid.Column="3" Grid.Row="0"
+                   Content="Всего"/>
+            <Button Grid.Column="0" Grid.Row="1"
+                    Content="Min"
+                    Command="{Binding CutProgramms.SelectProgramm.SetZeroStepCommand}"
+                    Style="{StaticResource RectBtn}"/>
+            <TextBox Grid.Column="1" Grid.Row="1"
+                     Width="70"
+                     VerticalContentAlignment="Center"
+                     HorizontalContentAlignment="Center"
+                     Text="{Binding CutProgramms.SelectProgramm.StepActual}"/>
+            <ProgressBar Grid.Column="2" Grid.Row="1" 
+                         Maximum="{Binding CutProgramms.SelectProgramm.StepCount, Mode=OneWay}"
+                         Value="{Binding CutProgramms.SelectProgramm.StepActual}" MouseWheel="ProgressBar_MouseWheel"/>
+            <TextBox Grid.Column="3" Grid.Row="1"
+                     Width="70"
+                     VerticalContentAlignment="Center"
+                     HorizontalContentAlignment="Center"
+                     Text="{Binding CutProgramms.SelectProgramm.StepCount, Mode=OneWay}"/>
+            <Button Grid.Column="4" Grid.Row="1"
+                    Content="Max"
+                    Command="{Binding CutProgramms.SelectProgramm.SetMaxStepCommand}"
+                    Style="{StaticResource RectBtn}"/>
+        </Grid>
     </Grid>
 </UserControl>

@@ -35,6 +35,7 @@ namespace ProfileCutter.Configuration
                     new XAttribute("Name", programm.Name),
                     new XAttribute("Width", programm.Width),
                     new XAttribute("Length", programm.Length),
+                    new XAttribute("Interval", programm.Interval),
                     new XAttribute("Height", programm.Height)));
             }
             
@@ -95,6 +96,7 @@ namespace ProfileCutter.Configuration
                             Id = Guid.Parse(prog.Attribute("Guid").Value),
                             Name = prog.Attribute("Name").Value,
                             Width = double.Parse(prog.Attribute("Width").Value.Replace(',', '.')),
+                            Interval = double.Parse(prog.Attribute("Interval").Value.Replace(',', '.')),
                             Length = double.Parse(prog.Attribute("Length").Value.Replace(',', '.')),
                             Height = double.Parse(prog.Attribute("Height").Value.Replace(',', '.'))
                         });

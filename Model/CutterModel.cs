@@ -32,7 +32,7 @@ namespace ProfileCutter.Model
         }
         private byte _sensorrequest;
 
-        private Mach3 Mach3;
+        public Mach3 Mach3 { get; }
         public List<SensorModel> Sensors { get; } = new List<SensorModel>();
 
         public ProgrammManager CutProgramms {get;} = new ProgrammManager();
@@ -51,15 +51,15 @@ namespace ProfileCutter.Model
             Sensors.Add(new SensorModel("Y", Mach3.SensorPoller, 7, 1));
             Sensors.Add(new SensorModel("Z", Mach3.SensorPoller, 6, 0));
 
-            this.Saw = new ToggleModel(Mach3.Spindle, null, false, 12000);
+            this.Saw = new ToggleModel(Mach3.Spindle, null, false, 12000000);
             this.Saw.Stop();
-            this.Press = new ToggleModel(Mach3.Clamp, new SensorModel[] { Sensors[0], Sensors[1] }, true, 2000);
-            if (this.Press.IsOn == true) 
+            this.Press = new ToggleModel(Mach3.Clamp, new SensorModel[] { Sensors[0], Sensors[1] }, true, 1000000);
+            if (this.Press.Status == ToggleStatus.RUNING) 
                 this.Press.Stop();
 
-            this.X = new AxisModel("X", Mach3.X, Sensors[2], false);
-            this.Y = new AxisModel("Y", Mach3.Y, Sensors[3], false);
-            this.Z = new AxisModel("Z", Mach3.Z, Sensors[4], true, 300);
+            this.X = new AxisModel("X", Mach3.X, Sensors[2], false, Press.Stop);
+            this.Y = new AxisModel("Y", Mach3.Y, Sensors[3], false, Press.Run);
+            this.Z = new AxisModel("Z", Mach3.Z, Sensors[4], true, null, 300);
 
             ReadWrite.Load(this);
         }
@@ -103,6 +103,14 @@ namespace ProfileCutter.Model
         public ICommand SaveCommand => new ActionCommand(() =>
         {
             ReadWrite.Save(this);
+            foreach(CutProgramm programm in this.CutProgramms.Programms)
+            {
+                programm.UpdateDisplay();
+            }
+            foreach (Profile profile in this.CutProgramms.Profiles)
+            {
+                profile.UpdateDisplay();
+            }
         });
 
         public ICommand HomeCommand => new ActionCommand(async () =>

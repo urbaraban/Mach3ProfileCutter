@@ -37,6 +37,7 @@ namespace ProfileCutter.Model.Programms
             {
                 _profile = value;
                 if (value != null && GetProfile(value.Id.ToString()) == null) this.Profiles.Add(value);
+                if (_profile != null) SelectProgramm.Length = this.SelectProfile.Length;
                 OnPropertyChanged(nameof(SelectProfile));
             }
         }
@@ -94,6 +95,11 @@ namespace ProfileCutter.Model.Programms
             }
         });
 
+        public ICommand UpdateProfileLengthCommand => new ActionCommand(() =>
+        {
+            this.SelectProgramm.Length = SelectProfile.Length;
+        });
+
 
         internal Profile GetProfile(string value)
         {
@@ -130,5 +136,10 @@ namespace ProfileCutter.Model.Programms
         private string _name = "Empty";
         public double Length { get; set; }
         public double Width { get; set; }
+
+        internal void UpdateDisplay()
+        {
+            OnPropertyChanged(nameof(Display));
+        }
     }
 }

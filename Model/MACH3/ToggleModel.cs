@@ -2,29 +2,30 @@
 using Microsoft.Xaml.Behaviors.Core;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace ProfileCutter.Model.MACH3
 {
     public class ToggleModel : ModelObject
     {
-        public bool IsOn
+        public ToggleStatus Status
         {
             get
             {
-                bool result = false;
-                if (Sensors != null) result = Sensors.Any(e => e.Detect == InverseSensor);
-                else result = _isOn;
+                ToggleStatus result = status;
+                if (Sensors != null && Sensors.Any(e => e.Detect == InverseSensor) == true)
+                    result = ToggleStatus.RUNING;
                 return result;
             }
             set
             {
-                _isOn = value;
-                OnPropertyChanged(nameof(IsOn));
+                status = value;
+                OnPropertyChanged(nameof(Status));
             }
 
         }
-        private bool _isOn;
+        private ToggleStatus status;
 
         private bool InverseSensor { get; }
         private IEnumerable<SensorModel> Sensors { get; set; }
@@ -48,29 +49,40 @@ namespace ProfileCutter.Model.MACH3
             }
         }
 
-        private void Sensor_StatusChanged(object sender, bool e) => OnPropertyChanged(nameof(IsOn));
+        private void Sensor_StatusChanged(object sender, bool e) => OnPropertyChanged(nameof(Status));
 
-        public ICommand ToggleCommand => new ActionCommand(() =>
+        public ICommand ToggleCommand => new ActionCommand(async () =>
         {
-            if (this._isOn == true)
+            if (this.Status == ToggleStatus.STADY)
             {
-                this.Run();
+                await this.Run();
             }
             else
             {
-                this.Stop();
+                await this.Stop();
             }
         });
 
-        public async void Run()
+        public async Task Run()
         {
-            await this.Mach3Toggle.On(Delay);
-            IsOn = true;
+            Status = ToggleStatus.READY;
+            await Task.Run(() =>
+            {
+                this.Mach3Toggle.On(Delay);
+            });
+            Status = ToggleStatus.RUNING;
         }
-        public void Stop()
+        public async Task Stop()
         {
             this.Mach3Toggle.Off();
-            IsOn = false;
-        }
+            Status = ToggleStatus.STADY;
         }
     }
+
+    public enum ToggleStatus
+    {
+        STADY,
+        READY,
+        RUNING
+    }
+}

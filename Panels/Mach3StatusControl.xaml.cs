@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProfileCutter.Model.MACH3;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -34,6 +35,28 @@ namespace ProfileCutter.Panels
             if (value is bool detect && detect == true)
             {
                 return Brushes.IndianRed;
+            }
+            return Brushes.WhiteSmoke;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
+
+    public class ToggleColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is ToggleStatus status)
+            {
+                if (status == ToggleStatus.RUNING)
+                    return Brushes.IndianRed;
+                else if (status == ToggleStatus.READY)
+                    return Brushes.Yellow;
+                else
+                    return Brushes.DarkGreen;
             }
             return Brushes.WhiteSmoke;
         }

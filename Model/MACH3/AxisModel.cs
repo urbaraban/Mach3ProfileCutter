@@ -2,6 +2,7 @@
 using Microsoft.Xaml.Behaviors.Core;
 using System;
 using System.Globalization;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Xml.Linq;
 
@@ -9,8 +10,10 @@ namespace ProfileCutter.Model.MACH3
 {
     public class AxisModel : ModelObject
     {
+        public delegate Task PreMoveAction();
+        public PreMoveAction PreMove { get; set; }
+
         public long Steps => this.AxisMotor.Position;
-        public long Delay => (long)(1000000 / (Speed * StPerMillimetre));
 
         public bool InversePosition { get; set; } = false;
         public double Position
@@ -102,16 +105,19 @@ namespace ProfileCutter.Model.MACH3
         }
         private bool ismoving;
 
-        private SensorModel _sensor;
+        private readonly SensorModel _sensor;
+
+        private long Delay => (long)(1000000 / (Speed * StPerMillimetre));
 
         private Mach3AxisMotor AxisMotor { get; }
-        public AxisModel(string name, Mach3AxisMotor mach3Axis, SensorModel sensor, bool inverse, double offset = 0)
+        public AxisModel(string name, Mach3AxisMotor mach3Axis, SensorModel sensor, bool inverse, PreMoveAction moveAction, double offset = 0)
         {
             this.Name = name;
             this.AxisMotor = mach3Axis;
             this.Offset = offset;
             this.InversePosition = inverse;
             this._sensor = sensor;
+            this.PreMove = moveAction;
             sensor.StatusChanged += Sensor_StatusChanged; ;
         }
 
@@ -131,10 +137,11 @@ namespace ProfileCutter.Model.MACH3
                 (vector == MoveVector.DOWN && this._sensor.Detect == false));
         }
 
-        public void GoToPosition(double value)
+        public async Task GoToPosition(double value)
         {
+            PreMove?.Invoke();
             long finish = GetPositionInStep(value);
-            MoveVector vector = 
+            MoveVector vector =
                 (value < this.Position && this.InversePosition == false) ? MoveVector.DOWN : MoveVector.UP;
             if (Math.Abs(finish - this.Steps) > 0)
             {

@@ -21,6 +21,7 @@
             <Setter Property="Margin" Value="2"/>
         </Style>
         <panels:BoolColorConverter x:Key="BoolColor"/>
+        <panels:ToggleColorConverter x:Key="ToggleColor"/>
     </UserControl.Resources>
     <Grid Background="LightGray">
         <Grid.ColumnDefinitions>
@@ -60,7 +61,7 @@
         </ItemsControl>
         <Label Content="{Binding SensorsReqest}"
                VerticalContentAlignment="Center"
-               Grid.Row="2"
+               Grid.Row="0"
                Grid.Column="6"/>
         <Label Content="X:"
                Grid.Row="1"
@@ -95,5 +96,18 @@
             <Button Content="Домой"
                     Command="{Binding HomeCommand}"/>
         </DockPanel>
+        <StackPanel Grid.Column="6" Grid.Row="2"
+                    Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <Ellipse Fill="{Binding Saw.Status, Converter={StaticResource ToggleColor}}" Height="20" Width="20" />
+                <TextBlock Text="Пила" VerticalAlignment="Center" Margin="5"/>
+            </StackPanel>
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Ellipse Fill="{Binding Press.Status, Converter={StaticResource ToggleColor}}" Height="20" Width="20" />
+                    <TextBlock Text="Прижим" VerticalAlignment="Center" Margin="5"/>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </UserControl>

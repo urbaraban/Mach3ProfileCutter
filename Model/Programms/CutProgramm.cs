@@ -1,8 +1,7 @@
-﻿using Mach3_netframework.MACH3;
+﻿using Microsoft.Xaml.Behaviors.Core;
 using System;
-using System.Security;
 using System.Threading.Tasks;
-using System.Windows;
+using System.Windows.Input;
 
 namespace ProfileCutter.Model.Programms
 {
@@ -23,7 +22,7 @@ namespace ProfileCutter.Model.Programms
 
         public string Display
         {
-            get => $"{this.Name} - {this.Length} - {this.Interval} - {this.Height}";
+            get => $"{this.Name} - {this.Length} - {this.Width} - {this.Interval} - {this.Height}";
             set => this.Name = value;
         }
         public string Name
@@ -33,7 +32,6 @@ namespace ProfileCutter.Model.Programms
             {
                 _name = value;
                 OnPropertyChanged(nameof(Name));
-                OnPropertyChanged(nameof(Display));
             }
         }
         private string _name = "Empty";
@@ -44,8 +42,9 @@ namespace ProfileCutter.Model.Programms
             set
             {
                 _length = value;
+                SetMaxStepCommand.Execute(null);
                 OnPropertyChanged(nameof(Length));
-                OnPropertyChanged(nameof(Display));
+                OnPropertyChanged(nameof(StepCount));
             }
         }
         private double _length = 0;
@@ -57,7 +56,6 @@ namespace ProfileCutter.Model.Programms
             {
                 _width = value;
                 OnPropertyChanged(nameof(Width));
-                OnPropertyChanged(nameof(Display));
             }
         }
         private double _width = 0;
@@ -67,8 +65,9 @@ namespace ProfileCutter.Model.Programms
             set
             {
                 _interval = value;
+                SetMaxStepCommand.Execute(null);
                 OnPropertyChanged(nameof(Interval));
-                OnPropertyChanged(nameof(Display));
+                OnPropertyChanged(nameof(StepCount));
             }
         }
         private double _interval = 0;
@@ -80,27 +79,71 @@ namespace ProfileCutter.Model.Programms
             {
                 _height = value;
                 OnPropertyChanged(nameof(Height));
-                OnPropertyChanged(nameof(Display));
             }
         }
         private double _height = 1;
 
-        public int StepActual { get; set; } = 0;
-
-        public int StepCount => (int)Math.Round(this.Length / Interval) - 1;
-
-        private void SetProfile(Profile profile)
+        public int StepActual 
         {
-            if (MessageBox.Show("Пересчитать под профиль?", "Настройки", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            get => stepactual;
+            set
             {
-                this.Length = profile.Length;
+                stepactual = Math.Max(value, 0);
+                OnPropertyChanged(nameof(StepActual));
             }
         }
+        private int stepactual = 0;
 
-        public async Task<bool> Run(CutterModel mach3)
+        public int StepCount
         {
-            IsStopping = false;
-            return false;
+            get => stepcount;
+            set
+            {
+                stepcount = value;
+                OnPropertyChanged(nameof(StepCount));
+            }
         }
+        private int stepcount;
+
+        public async Task<bool> Run(CutterModel modelM3)
+        {
+            try
+            {
+                modelM3.HomeCommand.Execute(null);
+                modelM3.Mach3.IsTurn = true;
+                IsStopping = false;
+                StepActual = StepActual == 0 ? 1 : StepActual;
+                await modelM3.TryMoveAxis(modelM3.X, this.StepActual);
+                await modelM3.TryMoveAxis(modelM3.Z, this.Height);
+                await modelM3.Saw.Run();
+                while (modelM3.Mach3.IsTurn == true && StepActual <= this.StepCount)
+                {
+                    await modelM3.TryMoveAxis(modelM3.X, this.StepActual * this.Interval);
+                    await modelM3.TryMoveAxis(modelM3.Y, Math.Abs(modelM3.Y.Position - this.Width));
+                    StepActual += 1;
+                }
+                return true;
+            }
+            catch
+            {
+                modelM3.StopCommand.Execute(null);
+                return false;
+            }
+
+        }
+
+        public void UpdateDisplay()
+        {
+            OnPropertyChanged(nameof(Display));
+        }
+
+        public ICommand SetMaxStepCommand => new ActionCommand(() =>
+        {
+            StepCount = (int)Math.Round(this.Length / Interval) - 1;
+        });
+        public ICommand SetZeroStepCommand => new ActionCommand(() =>
+        {
+            StepActual = 0;
+        });
     }
 }
