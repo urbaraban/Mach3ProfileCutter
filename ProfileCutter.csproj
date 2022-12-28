@@ -133,13 +133,14 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\Programms\CutProgramm.cs" />
+    <Compile Include="Model\Interfaces\ITurnObject.cs" />
+    <Compile Include="Model\Programms\CutConfiguration.cs" />
     <Compile Include="Model\MACH3\AxisModel.cs" />
     <Compile Include="Model\CutterModel.cs" />
     <Compile Include="Model\ModelObject.cs" />
     <Compile Include="Model\MACH3\SensorModel.cs" />
     <Compile Include="Model\MACH3\ToggleModel.cs" />
-    <Compile Include="Model\Programms\ProgrammManager.cs" />
+    <Compile Include="Model\Programms\CutConfigurationManager.cs" />
     <Compile Include="Panels\LogsPanel.xaml.cs">
       <DependentUpon>LogsPanel.xaml</DependentUpon>
     </Compile>

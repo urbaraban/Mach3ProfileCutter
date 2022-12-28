@@ -28,7 +28,7 @@ namespace ProfileCutter.Configuration
             mach3.Add(axises);
 
             XElement programms = new XElement("Programms");
-            foreach (CutProgramm programm in cutter.CutProgramms.Programms)
+            foreach (CutConfiguration programm in cutter.CutConfigs.Configs)
             {
                 programms.Add(new XElement("Programm",
                     new XAttribute("Guid", programm.Id),
@@ -42,7 +42,7 @@ namespace ProfileCutter.Configuration
             mach3.Add(programms);
 
             XElement profiles = new XElement("Profiles");
-            foreach(Profile prof in cutter.CutProgramms.Profiles)
+            foreach(Profile prof in cutter.CutConfigs.Profiles)
             {
                 profiles.Add(new XElement("Profile",
                     new XAttribute("Guid", prof.Id),
@@ -76,7 +76,7 @@ namespace ProfileCutter.Configuration
                 {
                     if (prof.FirstAttribute != null)
                     {
-                        cutter.CutProgramms.Profiles.Add(
+                        cutter.CutConfigs.Profiles.Add(
                             new Profile()
                             {
                                 Id = Guid.Parse(prof.Attribute("Guid").Value),
@@ -90,8 +90,8 @@ namespace ProfileCutter.Configuration
                 XElement programms = mach3.Element("Programms");
                 foreach (XElement prog in programms.Elements("Programm"))
                 {
-                    cutter.CutProgramms.Programms.Add(
-                        new CutProgramm()
+                    cutter.CutConfigs.Configs.Add(
+                        new CutConfiguration()
                         {
                             Id = Guid.Parse(prog.Attribute("Guid").Value),
                             Name = prog.Attribute("Name").Value,

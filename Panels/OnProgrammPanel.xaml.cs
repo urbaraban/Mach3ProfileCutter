@@ -30,7 +30,7 @@ namespace ProfileCutter.Panels
         {
             if (this.DataContext is CutterModel cutterModel)
             {
-                cutterModel.CutProgramms.SelectProgramm.StepActual += (e.Delta / Math.Abs(e.Delta));
+                cutterModel.CutConfigs.SelectConf.StepActual += (e.Delta / Math.Abs(e.Delta));
             }
         }
     }

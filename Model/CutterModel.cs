@@ -1,8 +1,10 @@
 ﻿using Mach3_netframework.MACH3;
 using Microsoft.Xaml.Behaviors.Core;
 using ProfileCutter.Configuration;
+using ProfileCutter.Model.Interfaces;
 using ProfileCutter.Model.MACH3;
 using ProfileCutter.Model.Programms;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
@@ -12,8 +14,14 @@ using System.Windows.Input;
 
 namespace ProfileCutter.Model
 {
-    public class CutterModel : ModelObject
+    public class CutterModel : ModelObject, ITurnObject
     {
+        public delegate void StopAllDelegate();
+        private StopAllDelegate AllStop { get; set; }
+
+        public delegate bool TurnAxisDelegate();
+        public bool IsTurn { get; private set; }
+
         public AxisModel X { get; }
         public AxisModel Y { get; }
         public AxisModel Z { get; }
@@ -35,7 +43,7 @@ namespace ProfileCutter.Model
         public Mach3 Mach3 { get; }
         public List<SensorModel> Sensors { get; } = new List<SensorModel>();
 
-        public ProgrammManager CutProgramms {get;} = new ProgrammManager();
+        public CutConfigurationManager CutConfigs {get;} = new CutConfigurationManager();
 
         public ObservableCollection<string> LogsMessages { get; } = new ObservableCollection<string>();
 
@@ -61,6 +69,9 @@ namespace ProfileCutter.Model
             this.Y = new AxisModel("Y", Mach3.Y, Sensors[3], false, Press.Run);
             this.Z = new AxisModel("Z", Mach3.Z, Sensors[4], true, null, 300);
 
+            AllStop += Saw.Stop;
+            AllStop += this.Stop;
+
             ReadWrite.Load(this);
         }
 
@@ -76,11 +87,7 @@ namespace ProfileCutter.Model
             OnPropertyChanged(nameof(LogsMessages));
         }
 
-        public ICommand StopCommand => new ActionCommand(() =>
-        {
-            this.Saw.Stop();
-            this.Mach3.IsTurn = false;
-        });
+        public ICommand StopCommand => new ActionCommand(() => AllStop?.Invoke());
 
         public ICommand UpCommand => new ActionCommand(async () => await TryMoveAxis(Y, 0));
         public ICommand DownCommand => new ActionCommand(async () => await TryMoveAxis(Y, this.Y.MaxPosition));
@@ -88,26 +95,25 @@ namespace ProfileCutter.Model
         public ICommand RightCommand => new ActionCommand(async () => await TryMoveAxis(X, 0));
 
         public ICommand SawUp => new ActionCommand(async () => await TryMoveAxis(Z, 0));
-        public ICommand SawDown => new ActionCommand(async () => await TryMoveAxis(Z, CutProgramms.SelectProgramm.Height));
+        public ICommand SawDown => new ActionCommand(async () => await TryMoveAxis(Z, CutConfigs.SelectConf.Height));
 
         public async Task TryMoveAxis(AxisModel axis, double newposition)
         {
-            StopCommand.Execute(null);
+            this.IsTurn = true;
             await Task.Delay(100);
-            await Task.Run(() => { 
-                this.Mach3.IsTurn = true;
-                axis.GoToPosition(newposition);
+            await Task.Run(async () => { 
+                await axis.GoToPosition(newposition);
             });
         }
 
         public ICommand SaveCommand => new ActionCommand(() =>
         {
             ReadWrite.Save(this);
-            foreach(CutProgramm programm in this.CutProgramms.Programms)
+            foreach(CutConfiguration programm in this.CutConfigs.Configs)
             {
                 programm.UpdateDisplay();
             }
-            foreach (Profile profile in this.CutProgramms.Profiles)
+            foreach (Profile profile in this.CutConfigs.Profiles)
             {
                 profile.UpdateDisplay();
             }
@@ -118,13 +124,44 @@ namespace ProfileCutter.Model
             await Task.Run(() =>
             {
                 StopCommand.Execute(null);
-                this.Mach3.IsTurn = true;
+                this.IsTurn = true;
                 Z.GoHome();
                 Y.GoHome();
                 X.GoHome();
             });
         });
 
-        public ICommand RunProgrammCommand => new ActionCommand(async () => await this.CutProgramms.SelectProgramm.Run(this));
+        public ICommand RunProgrammCommand => new ActionCommand(async () => await StartProgramm(this.CutConfigs.SelectConf));
+
+        public async Task<bool> StartProgramm(CutConfiguration configuration)
+        {
+            try
+            {
+                HomeCommand.Execute(null);
+                configuration.IsRunning = true;
+                configuration.StepActual = configuration.StepActual == 0 ? 1 : configuration.StepActual;
+                await X.GoToPosition(configuration.StepActual * configuration.Interval);
+                await Z.GoToPosition(configuration.Height);
+                Saw.Run();
+                while (this.IsTurn == true && configuration.StepActual <= configuration.StepCount)
+                {
+                    configuration.StepActual += 1;
+                    await X.GoToPosition(configuration.StepActual * configuration.Interval);
+                    await Y.GoToPosition(Math.Abs(Y.Position - configuration.Width));
+                    
+                }
+                Saw.Stop();
+                return true;
+            }
+            catch
+            {
+                StopCommand.Execute(null);
+                return false;
+            }
+
+        }
+
+        public void Stop() => this.IsTurn = false;
+
     }
 }

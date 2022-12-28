@@ -1,5 +1,6 @@
 ﻿using Mach3_netframework.MACH3;
 using Microsoft.Xaml.Behaviors.Core;
+using ProfileCutter.Model.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,8 +8,9 @@ using System.Windows.Input;
 
 namespace ProfileCutter.Model.MACH3
 {
-    public class ToggleModel : ModelObject
+    public class ToggleModel : ModelObject, ITurnObject
     {
+        public bool IsTurn => Status == ToggleStatus.RUNING;
         public ToggleStatus Status
         {
             get
@@ -22,6 +24,7 @@ namespace ProfileCutter.Model.MACH3
             {
                 status = value;
                 OnPropertyChanged(nameof(Status));
+                OnPropertyChanged(nameof(IsTurn));
             }
 
         }
@@ -51,28 +54,27 @@ namespace ProfileCutter.Model.MACH3
 
         private void Sensor_StatusChanged(object sender, bool e) => OnPropertyChanged(nameof(Status));
 
-        public ICommand ToggleCommand => new ActionCommand(async () =>
+        public ICommand ToggleCommand => new ActionCommand(() =>
         {
             if (this.Status == ToggleStatus.STADY)
             {
-                await this.Run();
+                this.Run();
             }
             else
             {
-                await this.Stop();
+                this.Stop();
             }
         });
 
-        public async Task Run()
+        public async void Run()
         {
             Status = ToggleStatus.READY;
-            await Task.Run(() =>
-            {
-                this.Mach3Toggle.On(Delay);
+            await Task.Run(() => {
+                this.Mach3Toggle.On(this.Delay);
             });
             Status = ToggleStatus.RUNING;
         }
-        public async Task Stop()
+        public void Stop()
         {
             this.Mach3Toggle.Off();
             Status = ToggleStatus.STADY;

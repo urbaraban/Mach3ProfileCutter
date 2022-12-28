@@ -1,22 +1,19 @@
-﻿using Microsoft.Xaml.Behaviors.Core;
-using System;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using System;
 
 namespace ProfileCutter.Model.Programms
 {
-    public class CutProgramm : ModelObject
+    public class CutConfiguration : ModelObject
     {
-        public bool IsStopping 
+        public bool IsRunning 
         {
-            get => _isstopping;
-            private set
+            get => _isrunning;
+            set
             {
-                _isstopping = value;
-                OnPropertyChanged(nameof(IsStopping));
+                _isrunning = value;
+                OnPropertyChanged(nameof(IsRunning));
             }
         }
-        private bool _isstopping = true;
+        private bool _isrunning = false;
 
         public Guid Id { get; set; } = Guid.NewGuid();
 
@@ -42,7 +39,6 @@ namespace ProfileCutter.Model.Programms
             set
             {
                 _length = value;
-                SetMaxStepCommand.Execute(null);
                 OnPropertyChanged(nameof(Length));
                 OnPropertyChanged(nameof(StepCount));
             }
@@ -65,7 +61,6 @@ namespace ProfileCutter.Model.Programms
             set
             {
                 _interval = value;
-                SetMaxStepCommand.Execute(null);
                 OnPropertyChanged(nameof(Interval));
                 OnPropertyChanged(nameof(StepCount));
             }
@@ -105,45 +100,9 @@ namespace ProfileCutter.Model.Programms
         }
         private int stepcount;
 
-        public async Task<bool> Run(CutterModel modelM3)
-        {
-            try
-            {
-                modelM3.HomeCommand.Execute(null);
-                modelM3.Mach3.IsTurn = true;
-                IsStopping = false;
-                StepActual = StepActual == 0 ? 1 : StepActual;
-                await modelM3.TryMoveAxis(modelM3.X, this.StepActual);
-                await modelM3.TryMoveAxis(modelM3.Z, this.Height);
-                await modelM3.Saw.Run();
-                while (modelM3.Mach3.IsTurn == true && StepActual <= this.StepCount)
-                {
-                    await modelM3.TryMoveAxis(modelM3.X, this.StepActual * this.Interval);
-                    await modelM3.TryMoveAxis(modelM3.Y, Math.Abs(modelM3.Y.Position - this.Width));
-                    StepActual += 1;
-                }
-                return true;
-            }
-            catch
-            {
-                modelM3.StopCommand.Execute(null);
-                return false;
-            }
-
-        }
-
         public void UpdateDisplay()
         {
             OnPropertyChanged(nameof(Display));
         }
-
-        public ICommand SetMaxStepCommand => new ActionCommand(() =>
-        {
-            StepCount = (int)Math.Round(this.Length / Interval) - 1;
-        });
-        public ICommand SetZeroStepCommand => new ActionCommand(() =>
-        {
-            StepActual = 0;
-        });
     }
 }

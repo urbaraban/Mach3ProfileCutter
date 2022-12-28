@@ -1,21 +1,13 @@
 ﻿using Microsoft.Xaml.Behaviors.Core;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Xml.Linq;
 
 namespace ProfileCutter.Model.Programms
 {
-    public class ProgrammManager : ModelObject
+    public class CutConfigurationManager : ModelObject
     {
-        public ObservableCollection<CutProgramm> Programms { get; } = new ObservableCollection<CutProgramm>();
+        public ObservableCollection<CutConfiguration> Configs { get; } = new ObservableCollection<CutConfiguration>();
         public ObservableCollection<Profile> Profiles { get; } = new ObservableCollection<Profile>();
 
         public Profile SelectProfile
@@ -37,46 +29,46 @@ namespace ProfileCutter.Model.Programms
             {
                 _profile = value;
                 if (value != null && GetProfile(value.Id.ToString()) == null) this.Profiles.Add(value);
-                if (_profile != null) SelectProgramm.Length = this.SelectProfile.Length;
+                if (_profile != null) SelectConf.Length = this.SelectProfile.Length;
                 OnPropertyChanged(nameof(SelectProfile));
             }
         }
         private Profile _profile;
 
-        public CutProgramm SelectProgramm
+        public CutConfiguration SelectConf
         {
             get
             {
-                if (_selectprogramm == null)
+                if (_SelectConf == null)
                 {
-                    _selectprogramm = new CutProgramm();
+                    _SelectConf = new CutConfiguration();
                 }
-                return _selectprogramm;
+                return _SelectConf;
             }
             set
             {
-                _selectprogramm = value;
-                if (_selectprogramm == null)
+                _SelectConf = value;
+                if (_SelectConf == null)
                 {
-                    _selectprogramm = new CutProgramm();
+                    _SelectConf = new CutConfiguration();
                 }
-                OnPropertyChanged(nameof(SelectProgramm));
+                OnPropertyChanged(nameof(SelectConf));
             }
         }
-        private CutProgramm _selectprogramm;
+        private CutConfiguration _SelectConf;
 
         public ICommand AddProgrammCommand => new ActionCommand(() => 
         {
-            SelectProgramm = new CutProgramm();
-            Programms.Add(SelectProgramm);
+            SelectConf = new CutConfiguration();
+            Configs.Add(SelectConf);
         });
 
         public ICommand RemoveProgrammCommand => new ActionCommand(() =>
         {
-            for (int i = 0; i < Programms.Count; i += 1)
+            for (int i = 0; i < Configs.Count; i += 1)
             {
-                if (SelectProgramm.Id == Programms[i].Id)
-                    Programms.RemoveAt(i);
+                if (SelectConf.Id == Configs[i].Id)
+                    Configs.RemoveAt(i);
             }
         });
 
@@ -97,9 +89,17 @@ namespace ProfileCutter.Model.Programms
 
         public ICommand UpdateProfileLengthCommand => new ActionCommand(() =>
         {
-            this.SelectProgramm.Length = SelectProfile.Length;
+            SelectConf.Length = SelectProfile.Length;
         });
 
+        public ICommand SetMaxStepCommand => new ActionCommand(() =>
+        {
+            SelectConf.StepCount = (int)Math.Round(SelectConf.Length / SelectConf.Interval) - 1;
+        });
+        public ICommand SetZeroStepCommand => new ActionCommand(() =>
+        {
+            SelectConf.StepActual = 0;
+        });
 
         internal Profile GetProfile(string value)
         {

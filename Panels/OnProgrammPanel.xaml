@@ -43,11 +43,11 @@
             <Button DockPanel.Dock="Right"
                     Content="X"
                     Style="{StaticResource RectBtn}"
-                    Command="{Binding CutProgramms.RemoveProgrammCommand}"/>
+                    Command="{Binding CutConfigs.RemoveProgrammCommand}"/>
             <Button DockPanel.Dock="Right"
                     Content="+"
                     Style="{StaticResource RectBtn}"
-                    Command="{Binding CutProgramms.AddProgrammCommand}"/>
+                    Command="{Binding CutConfigs.AddProgrammCommand}"/>
             <Button DockPanel.Dock="Right"
                     Content="S"
                     Style="{StaticResource RectBtn}"
@@ -56,18 +56,18 @@
                       DisplayMemberPath="Display"
                       VerticalContentAlignment="Center"
                       IsTextSearchEnabled="False"
-                      SelectedItem="{Binding CutProgramms.SelectProgramm}"
-                      ItemsSource="{Binding CutProgramms.Programms}"/>
+                      SelectedItem="{Binding CutConfigs.SelectConf}"
+                      ItemsSource="{Binding CutConfigs.Configs}"/>
         </DockPanel>
         <DockPanel Grid.Row="3" Style="{StaticResource VariableDoc}">
             <Label Content="Длина реза"
                    Style="{StaticResource VariableLabel}"/>
-            <TextBox Text="{Binding CutProgramms.SelectProgramm.Width}"/>
+            <TextBox Text="{Binding CutConfigs.SelectConf.Width}"/>
         </DockPanel>
         <DockPanel Grid.Row="2" Style="{StaticResource VariableDoc}">
             <Label Content="Интервал реза"
                    Style="{StaticResource VariableLabel}"/>
-            <TextBox Text="{Binding CutProgramms.SelectProgramm.Interval}" />
+            <TextBox Text="{Binding CutConfigs.SelectConf.Interval}" />
         </DockPanel>
         <DockPanel Grid.Column="1"
                    Grid.Row="1"
@@ -76,23 +76,23 @@
                    Style="{StaticResource VariableLabel}"/>
             <Button Content="x"
                     DockPanel.Dock="Right"
-                    Command="{Binding CutProgramms.RemoveProfileCommand}"
+                    Command="{Binding CutConfigs.RemoveProfileCommand}"
                     Style="{StaticResource RectBtn}"/>
             <Button Content="+"
                     DockPanel.Dock="Right"
-                    Command="{Binding CutProgramms.AddProfileCommand}"
+                    Command="{Binding CutConfigs.AddProfileCommand}"
                     Style="{StaticResource RectBtn}"/>
-            <ComboBox ItemsSource="{Binding CutProgramms.Profiles}"
+            <ComboBox ItemsSource="{Binding CutConfigs.Profiles}"
                       DisplayMemberPath="Display"
-                      Text="{Binding CutProgramms.SelectProfile.Display}"
+                      Text="{Binding CutConfigs.SelectProfile.Display}"
                       IsEditable="True"
-                      SelectedItem="{Binding CutProgramms.SelectProfile}"/>
+                      SelectedItem="{Binding CutConfigs.SelectProfile}"/>
         </DockPanel>
         <DockPanel Grid.Row="1"
                    Style="{StaticResource VariableDoc}">
             <Label Content="Высота реза"
                    Style="{StaticResource VariableLabel}"/>
-            <TextBox Text="{Binding CutProgramms.SelectProgramm.Height}"/>
+            <TextBox Text="{Binding CutConfigs.SelectConf.Height}"/>
         </DockPanel>
         <DockPanel Grid.Row="2" Grid.Column="1"
                    Style="{StaticResource VariableDoc}">
@@ -101,14 +101,14 @@
             <Button Content="R"
                     DockPanel.Dock="Right"
                     Style="{StaticResource RectBtn}"
-                    Command="{Binding CutProgramms.UpdateProfileLengthCommand}" />
-            <TextBox Text="{Binding CutProgramms.SelectProfile.Length}"/>
+                    Command="{Binding CutConfigs.UpdateProfileLengthCommand}" />
+            <TextBox Text="{Binding CutConfigs.SelectProfile.Length}"/>
         </DockPanel>
         <DockPanel Grid.Row="3" Grid.Column="1"
                    Style="{StaticResource VariableDoc}">
             <Label Content="Ширина проф."
                    Style="{StaticResource VariableLabel}"/>
-            <TextBox Text="{Binding CutProgramms.SelectProfile.Width}"/>
+            <TextBox Text="{Binding CutConfigs.SelectProfile.Width}"/>
         </DockPanel>
         <Button Content="СТАРТ"
                 Grid.Row="5"
@@ -140,24 +140,24 @@
                    Content="Всего"/>
             <Button Grid.Column="0" Grid.Row="1"
                     Content="Min"
-                    Command="{Binding CutProgramms.SelectProgramm.SetZeroStepCommand}"
+                    Command="{Binding CutConfigs.SetZeroStepCommand}"
                     Style="{StaticResource RectBtn}"/>
             <TextBox Grid.Column="1" Grid.Row="1"
                      Width="70"
                      VerticalContentAlignment="Center"
                      HorizontalContentAlignment="Center"
-                     Text="{Binding CutProgramms.SelectProgramm.StepActual}"/>
+                     Text="{Binding CutConfigs.SelectConf.StepActual}"/>
             <ProgressBar Grid.Column="2" Grid.Row="1" 
-                         Maximum="{Binding CutProgramms.SelectProgramm.StepCount, Mode=OneWay}"
-                         Value="{Binding CutProgramms.SelectProgramm.StepActual}" MouseWheel="ProgressBar_MouseWheel"/>
+                         Maximum="{Binding CutConfigs.SelectConf.StepCount, Mode=OneWay}"
+                         Value="{Binding CutConfigs.SelectConf.StepActual}" MouseWheel="ProgressBar_MouseWheel"/>
             <TextBox Grid.Column="3" Grid.Row="1"
                      Width="70"
                      VerticalContentAlignment="Center"
                      HorizontalContentAlignment="Center"
-                     Text="{Binding CutProgramms.SelectProgramm.StepCount, Mode=OneWay}"/>
+                     Text="{Binding CutConfigs.SelectConf.StepCount}"/>
             <Button Grid.Column="4" Grid.Row="1"
                     Content="Max"
-                    Command="{Binding CutProgramms.SelectProgramm.SetMaxStepCommand}"
+                    Command="{Binding CutConfigs.SetMaxStepCommand}"
                     Style="{StaticResource RectBtn}"/>
         </Grid>
     </Grid>

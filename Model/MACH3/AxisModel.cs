@@ -1,17 +1,21 @@
 ﻿using Mach3_netframework.MACH3;
 using Microsoft.Xaml.Behaviors.Core;
+using ProfileCutter.Model.Interfaces;
 using System;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Xml.Linq;
+using static ProfileCutter.Model.CutterModel;
 
 namespace ProfileCutter.Model.MACH3
 {
     public class AxisModel : ModelObject
     {
-        public delegate Task PreMoveAction();
+        public delegate void PreMoveAction();
         public PreMoveAction PreMove { get; set; }
+
+        public TurnAxisDelegate TurnAxis { get; set; }
 
         public long Steps => this.AxisMotor.Position;
 
@@ -94,17 +98,6 @@ namespace ProfileCutter.Model.MACH3
         }
         private double speed = 1;
 
-        public bool IsMoving
-        {
-            get => ismoving;
-            set
-            {
-                ismoving = value;
-                OnPropertyChanged(nameof(IsMoving));
-            }
-        }
-        private bool ismoving;
-
         private readonly SensorModel _sensor;
 
         private long Delay => (long)(1000000 / (Speed * StPerMillimetre));
@@ -121,6 +114,8 @@ namespace ProfileCutter.Model.MACH3
             sensor.StatusChanged += Sensor_StatusChanged; ;
         }
 
+        public ICommand SetZeroCommand => new ActionCommand(() => this.StartPosition = this.Steps);
+
         private void Sensor_StatusChanged(object sender, bool e)
         {
             if (e == true)
@@ -132,7 +127,7 @@ namespace ProfileCutter.Model.MACH3
 
         private bool AxisStop(MoveVector vector)
         {
-            return this.AxisMotor.ThisStop == true &&
+            return TurnAxis?.Invoke() == false &&
                 ((vector == MoveVector.UP && this.Steps < this.AxisMotor.Maximum) ||
                 (vector == MoveVector.DOWN && this._sensor.Detect == false));
         }
@@ -145,18 +140,16 @@ namespace ProfileCutter.Model.MACH3
                 (value < this.Position && this.InversePosition == false) ? MoveVector.DOWN : MoveVector.UP;
             if (Math.Abs(finish - this.Steps) > 0)
             {
-                this.IsMoving = true;
                 while (AxisStop(vector) == false && Math.Abs(finish - this.Steps) > 0)
                 {
                     this.Tic(vector);
                 }
-            }
-            this.IsMoving = false;
+            };
         }
 
         public void GoHome()
         {
-            while(this.AxisMotor.ThisStop == false && this._sensor.Detect == false)
+            while(this.TurnAxis?.Invoke() == true && this._sensor.Detect == false)
             {
                 this.Tic(MoveVector.DOWN);
             }
@@ -194,8 +187,5 @@ namespace ProfileCutter.Model.MACH3
                 this.MaxPosition = double.Parse(element.Attribute("Maximum").Value.Replace(',', '.'), CultureInfo.InvariantCulture);
             }
         }
-
-        public ICommand SetZeroCommand => new ActionCommand(() => this.StartPosition = this.Steps);
-
     }
 }
